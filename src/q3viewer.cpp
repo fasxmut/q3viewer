@@ -18,6 +18,7 @@ try
 		return 0;
 	}
 	q3viewer::engine_objects engine{video::EDT_OPENGL, 1280, 720};
+	engine.engine->setWindowCaption(L"q3viewer - Quake3 Map Level Viewer");
 	q3viewer::q3_map_loader qm_loader{engine, 1024};
 	qm_loader.load(argv[1], argv[2]);
 	
