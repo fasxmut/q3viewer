@@ -27,20 +27,22 @@ q3viewer::q3_map_loader::q3_map_loader(q3viewer::engine_objects & engine__, s32 
 
 void q3viewer::q3_map_loader::load(const std::string & pk3_name__, const std::string & bsp_name)
 {
-	std::string pk3_name;
 	if (pk3_name__ == "")
 		throw std::runtime_error{"Emtpy pk3 archive name is not allowed!"};
 	if (pk3_name__ == "/")
 		throw std::runtime_error{"Root path / as pk3 archive name is not allowed!"};
 	if (bsp_name == "")
 		throw std::runtime_error{"Emtpy bsp name is not allowed!"};
+		
+	std::string pk3_name;
 	
 	if (pk3_name__ == "." || pk3_name__ == "./" || pk3_name__ == ".//")
 		pk3_name = fs::current_path().string();
-	
-	if (pk3_name__ == ".." || pk3_name__ == "../" || pk3_name__ == "..//")
+	else if (pk3_name__ == ".." || pk3_name__ == "../" || pk3_name__ == "..//")
 		pk3_name = fs::current_path().parent_path().string();
-		
+	else
+		pk3_name = pk3_name__;
+	
 	if (! engine.fs->addFileArchive(pk3_name.data()))
 	{
 		std::cout << "pk3 archive can not be added: " << pk3_name << std::endl;
