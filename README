@@ -1,0 +1,41 @@
+q3viewer - Quake3 Map Level Viewer
+================================================================================
+
+q3viewer is a level viewer to explore quake3 map.
+
+
+
+Usage
+------------------------------------------------------------
+
+```
+q3viewer <pk3 archive> <bsp name>
+```
+
+
+
+Default config
+------------------------------------------------------------
+
+* Collision detection is setup;
+* Gravity is zero;
+* WASD is made default;
+
+
+
+Case
+------------------------------------------------------------
+
+* 1. Create a map using TrenchBroom;
+* 2. Compile the map using map-compiler;
+* 3. Explore the map using this q3viewer;
+
+
+
+LICENSE
+------------------------------------------------------------
+
+Boost Software License
+
+
+

@@ -1,0 +1,15 @@
+lib irrlicht : : <name>Irrlicht ;
+
+srcs =
+	q3viewer.cpp	# Main Program
+	engine_objects.cpp
+	q3_map_loader.cpp
+;
+
+exe q3viewer
+	:
+		$(srcs)
+	:
+		<library>irrlicht
+;
+
