@@ -12,15 +12,15 @@
 int main(int argc, char * argv[])
 try
 {
-	if (argc != 3)
+	if (argc != 2)
 	{
-		std::cout << "q3viewer <pk3 archive> <bsp name>" << std::endl;
+		std::cout << "q3viewer <pk3 archive>" << std::endl;
 		return 0;
 	}
 	q3viewer::engine_objects engine{video::EDT_OPENGL, 1280, 720};
 	engine.engine->setWindowCaption(L"q3viewer - Quake3 Map Level Viewer");
 	q3viewer::q3_map_loader qm_loader{engine, 1024};
-	qm_loader.load(argv[1], argv[2]);
+	qm_loader.load(argv[1]);
 	
 	engine.setup_camera_collision();
 	engine.run();

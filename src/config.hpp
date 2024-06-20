@@ -8,12 +8,9 @@
 #ifndef __cppfx_q3viewer_config_hpp__
 #define __cppfx_q3viewer_config_hpp__
 
-#include <irrlicht/irrlicht.h>
 #include <iostream>
 #include <string>
 #include <random>
-
-namespace api = irr;
 
 using s32 = api::s32;
 using u32 = api::u32;
@@ -23,7 +20,7 @@ using std::operator""s;
 
 namespace q3viewer
 {
-using game_engine = api::IrrlichtDevice;
+using game_engine = engine_device;
 }	// namespace q3viewer
 
 namespace video = api::video;

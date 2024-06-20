@@ -7,6 +7,7 @@
 
 #include "q3_map_loader.hpp"
 #include <filesystem>
+#include <string_view>
 
 namespace fs = std::filesystem;
 
@@ -25,17 +26,22 @@ q3viewer::q3_map_loader::q3_map_loader(q3viewer::engine_objects & engine__, s32 
 		throw std::runtime_error{"No engine is created!"};
 }
 
-void q3viewer::q3_map_loader::load(const std::string & pk3_name__, const std::string & bsp_name)
+void q3viewer::q3_map_loader::load(const std::string & pk3_name__)
+{
+	this->load_map(pk3_name__);
+	this->load_shaders();
+	this->spawn_player();
+}
+
+void q3viewer::q3_map_loader::load_map(const std::string & pk3_name__)
 {
 	if (pk3_name__ == "")
 		throw std::runtime_error{"Emtpy pk3 archive name is not allowed!"};
 	if (pk3_name__ == "/")
 		throw std::runtime_error{"Root path / as pk3 archive name is not allowed!"};
-	if (bsp_name == "")
-		throw std::runtime_error{"Emtpy bsp name is not allowed!"};
-		
+
 	std::string pk3_name;
-	
+
 	if (pk3_name__ == "." || pk3_name__ == "./" || pk3_name__ == ".//")
 		pk3_name = fs::current_path().string();
 	else if (pk3_name__ == ".." || pk3_name__ == "../" || pk3_name__ == "..//")
@@ -43,15 +49,41 @@ void q3viewer::q3_map_loader::load(const std::string & pk3_name__, const std::st
 	else
 		pk3_name = pk3_name__;
 	
-	if (! engine.fs->addFileArchive(pk3_name.data()))
+	if (engine.fs->getFileArchiveCount() != 0u)
 	{
-		std::cout << "pk3 archive can not be added: " << pk3_name << std::endl;
+		std::cout << "ERROR: this should not happen before adding: engine.fs->getFileArchiveCount() != 0u .\n";
 		return;
 	}
-	mesh_mv = engine.scene->getMesh(bsp_name.data());
+	if (! engine.fs->addFileArchive(pk3_name.data()))
+	{
+		std::cout << "ERROR: pk3 archive can not be added: " << pk3_name << std::endl;
+		return;
+	}
+	if (engine.fs->getFileArchiveCount() != 1u)
+	{
+		std::cout << "ERROR: this should not happen after adding: engine.fs->getFileArchiveCount() != 1u .\n";
+		return;
+	}
+
+	std::string map_name__;
+	const api::io::IFileArchive * archive__ = engine.fs->getFileArchive(0u);
+	const api::io::IFileList * file_list__ = archive__->getFileList();
+	for (u32 i=0; i<file_list__->getFileCount(); ++i)
+	{
+		const api::io::path & path__ = file_list__->getFileName(i);
+		if (std::string_view{path__.data()}.ends_with(".bsp"))
+			map_name__ = path__.data();
+	}
+	if (map_name__.empty() || ! map_name__.ends_with(".bsp"))
+	{
+		std::cout << "ERROR: can not find map mesh file !" << std::endl;
+		return;
+	}
+
+	mesh_mv = engine.scene->getMesh(map_name__.data());
 	if (! mesh_mv)
-		throw std::runtime_error{"bsp map can not be loaded: "s + bsp_name};
-	std::cout << "Loaded: " << bsp_name << std::endl;
+		throw std::runtime_error{"bsp map can not be loaded: "s + map_name__};
+	std::cout << "Loaded: " << map_name__ << std::endl;
 	
 	mesh_qv = static_cast<scene::IQ3LevelMesh *>(mesh_mv);
 	
@@ -77,8 +109,6 @@ void q3viewer::q3_map_loader::load(const std::string & pk3_name__, const std::st
 	g_node->setTriangleSelector(g_selector);
 	engine.meta_selector->addTriangleSelector(g_selector);
 	g_selector->drop();
-	
-	this->load_shaders();
 }
 
 void q3viewer::q3_map_loader::load_shaders()
@@ -126,7 +156,6 @@ void q3viewer::q3_map_loader::load_shaders()
 			selector->drop();
 		}
 	}
-	this->spawn_player();
 }
 
 void q3viewer::q3_map_loader::spawn_player()

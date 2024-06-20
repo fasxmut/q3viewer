@@ -27,8 +27,9 @@ public:
 public:
 	q3_map_loader(q3viewer::engine_objects & engine__, s32 polys__);
 public:
-	void load(const std::string & pk3_name, const std::string & bsp_name);
+	void load(const std::string & pk3_name);
 protected:
+	void load_map(const std::string & pk3_name__);
 	void load_shaders();
 	void spawn_player();
 };

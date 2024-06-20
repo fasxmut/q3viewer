@@ -1,5 +1,3 @@
-lib irrlicht : : <name>Irrlicht ;
-
 srcs =
 	q3viewer.cpp	# Main Program
 	engine_objects.cpp
@@ -10,6 +8,6 @@ exe q3viewer
 	:
 		$(srcs)
 	:
-		<library>irrlicht
+		<cxxstd>23
 ;
 
