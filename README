@@ -5,11 +5,22 @@ q3viewer is a level viewer to explore quake3 map.
 
 
 
+Home
+------------------------------------------------------------
+
+Hompage:
+
+https://cppfx.xyz/projects/q3viewer
+
+Go to q3viewer homepage to read how to build.
+
+
+
 Usage
 ------------------------------------------------------------
 
 ```
-q3viewer <pk3 archive> <bsp name>
+q3viewer <pk3 name>
 ```
 
 
