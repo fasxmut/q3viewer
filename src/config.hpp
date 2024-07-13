@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <mutex>
 
 using s32 = api::s32;
 using u32 = api::u32;
@@ -42,6 +43,8 @@ inline api::SKeyMap q3viewer_keymap_wasd[] =
 		{api::EKA_STRAFE_RIGHT, api::KEY_KEY_D}
 	};
 inline s32 q3viewer_keymap_wasd_size = 4;
+
+static std::mutex q3viewer_print_mutex{};
 
 #endif	// __cppfx_q3viewer_config_hpp__
 

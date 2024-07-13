@@ -8,8 +8,78 @@
 #include "q3_map_loader.hpp"
 #include <filesystem>
 #include <string_view>
+#include <iomanip>
+#include <sstream>
+#include <algorithm>
 
 namespace fs = std::filesystem;
+
+namespace q3viewer
+{
+
+class qm_index_to_string_class
+{
+public:
+	std::string operator()(const quake3::eQ3MeshIndex qm_index) const
+	{
+		switch (qm_index)
+		{
+		case quake3::E_Q3_MESH_GEOMETRY:
+			return "api::scene::quake3::E_Q3_MESH_GEOMETRY";
+		case quake3::E_Q3_MESH_ITEMS:
+			return "api::scene::quake3::E_Q3_MESH_ITEMS";
+		case quake3::E_Q3_MESH_BILLBOARD:
+			return "api::scene::quake3::E_Q3_MESH_BILLBOARD";
+		case quake3::E_Q3_MESH_FOG:
+			return "api::scene::quake3::E_Q3_MESH_FOG";
+		case quake3::E_Q3_MESH_UNRESOLVED:
+			return "api::scene::quake3::E_Q3_MESH_UNRESOLVED";
+		case quake3::E_Q3_MESH_SIZE:
+			return "api::scene::quake3::E_Q3_MESH_SIZE";
+		}
+		return "Unknown Shader";
+	}
+};
+
+class qm_index_to_wstring_class
+{
+public:
+	std::wstring operator()(const quake3::eQ3MeshIndex qm_index) const
+	{
+		switch (qm_index)
+		{
+		case quake3::E_Q3_MESH_GEOMETRY:
+			return L"api::scene::quake3::E_Q3_MESH_GEOMETRY";
+		case quake3::E_Q3_MESH_ITEMS:
+			return L"api::scene::quake3::E_Q3_MESH_ITEMS";
+		case quake3::E_Q3_MESH_BILLBOARD:
+			return L"api::scene::quake3::E_Q3_MESH_BILLBOARD";
+		case quake3::E_Q3_MESH_FOG:
+			return L"api::scene::quake3::E_Q3_MESH_FOG";
+		case quake3::E_Q3_MESH_UNRESOLVED:
+			return L"api::scene::quake3::E_Q3_MESH_UNRESOLVED";
+		case quake3::E_Q3_MESH_SIZE:
+			return L"api::scene::quake3::E_Q3_MESH_SIZE";
+		}
+		return L"";
+	}
+};
+
+class to_wstring_class
+{
+public:
+	std::wstring operator()(const std::string & str) const
+	{
+		std::wstring wstr;
+		for (const auto & x: str)
+		{
+			wstr.push_back(static_cast<wchar_t>(x));
+		}
+		return wstr;
+	}
+};
+
+}	// namespace q3viewer
 
 q3viewer::q3_map_loader::~q3_map_loader()
 {
@@ -113,7 +183,11 @@ void q3viewer::q3_map_loader::load_map(const std::string & pk3_name__)
 
 void q3viewer::q3_map_loader::load_shaders()
 {
-	std::cout << "====\n" << quake3::E_Q3_MESH_SIZE << std::endl;
+	std::ostringstream cout_buffer;
+	cout_buffer << "--------------------------------------------------------------------------------\n"
+		<< ":: " << q3viewer::qm_index_to_string_class{}(api::scene::quake3::E_Q3_MESH_SIZE)
+		<< " :\t" << quake3::E_Q3_MESH_SIZE
+		<< "\n=>" << std::endl;
 	for (
 		quake3::eQ3MeshIndex qm_index:
 			{
@@ -124,13 +198,18 @@ void q3viewer::q3_map_loader::load_shaders()
 			}
 	)
 	{
-		std::cout << "\t" << qm_index << std::endl;
+		cout_buffer
+			<< "\t:: "
+			<< std::left << std::setw(40) << q3viewer::qm_index_to_string_class{}(qm_index)
+			<< std::right << std::setw(3) << ":"
+			<< std::right << std::setw(10)  << qm_index << std::endl;
 		scene::IMesh * e_mesh = mesh_qv->getMesh(qm_index);
 		if (! e_mesh)
 			continue;
 		s32 mb_count = e_mesh->getMeshBufferCount();
-		std::cout << "\t\t" << mb_count << std::endl;
-		for (s32 i=0; i<mb_count; ++i)
+		cout_buffer << "\t\t:: Mesh Buffer Count:\t" << mb_count << std::endl;
+		api::s32 i=0;
+		for (; i<mb_count; ++i)
 		{
 			scene::IMeshBuffer * mesh_buffer = e_mesh->getMeshBuffer(i);
 			if (! mesh_buffer)
@@ -146,6 +225,30 @@ void q3viewer::q3_map_loader::load_shaders()
 				nullptr,
 				-1
 			);
+			if (! node)
+			{
+				std::cout << "::::::::::: invalid node ! ::::::::::::\n";
+				continue;
+			}
+			scene::ITextSceneNode * text_node = engine.scene->addTextSceneNode(
+				engine.gui->getSkin()->getFont(),
+				q3viewer::qm_index_to_wstring_class{}(qm_index).data(),
+				video::SColor{0xff32ff32},
+				node,
+				core::vector3df{0},
+				-1
+			);
+			switch (qm_index)
+			{
+			case quake3::E_Q3_MESH_FOG:
+				text_node->setText((L"Fog: "s + q3viewer::to_wstring_class{}(shader->name.data())).data());
+				break;
+			case quake3::E_Q3_MESH_ITEMS:
+				text_node->setText((L"Item: "s + q3viewer::to_wstring_class{}(shader->name.data())).data());
+				break;
+			default:
+				break;
+			}
 			scene::ITriangleSelector * selector = engine.scene->createTriangleSelector(
 				node->getMesh(),
 				node
@@ -155,6 +258,16 @@ void q3viewer::q3_map_loader::load_shaders()
 			engine.meta_selector->addTriangleSelector(selector);
 			selector->drop();
 		}
+		if (i == 0)
+			cout_buffer << "\t\t\t:: No Shader !" << std::endl;
+		else
+			cout_buffer << "\t\t\t:: Loaded Shaders :\t" << i << std::endl;
+	}
+	cout_buffer << "--------------------------------------------------------------------------------\n";
+
+	{
+		std::unique_lock<std::mutex> lock{q3viewer_print_mutex};
+		std::cout << cout_buffer.str();
 	}
 }
 
