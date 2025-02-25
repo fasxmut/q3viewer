@@ -208,7 +208,7 @@ void q3viewer::q3_map_loader::load_shaders()
 			continue;
 		i32 mb_count = e_mesh->getMeshBufferCount();
 		cout_buffer << "\t\t:: Mesh Buffer Count:\t" << mb_count << std::endl;
-		api::i32 i=0;
+		api::int32_kt i=0;
 		for (; i<mb_count; ++i)
 		{
 			scene::IMeshBuffer * mesh_buffer = e_mesh->getMeshBuffer(i);
