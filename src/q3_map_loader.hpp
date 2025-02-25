@@ -21,11 +21,11 @@ protected:
 protected:
 	scene::IAnimatedMesh * mesh_mv;	// model viewer of mesh
 	scene::IQ3LevelMesh * mesh_qv;	// quake3 viewer of mesh
-	s32 polys;
+	i32 polys;
 public:
 	virtual ~q3_map_loader();
 public:
-	q3_map_loader(q3viewer::engine_objects & engine__, s32 polys__);
+	q3_map_loader(q3viewer::engine_objects & engine__, i32 polys__);
 public:
 	void load(const std::string & pk3_name);
 protected:

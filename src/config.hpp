@@ -13,7 +13,7 @@
 #include <random>
 #include <mutex>
 
-using s32 = api::s32;
+using i32 = api::i32;
 using u32 = api::u32;
 using f32 = api::f32;
 
@@ -28,7 +28,7 @@ namespace video = api::video;
 namespace scene = api::scene;
 namespace io = api::io;
 namespace gui = api::gui;
-namespace core = api::core;
+namespace nub = api::nub;
 namespace quake3 = scene::quake3;
 
 constexpr bool q3viewer_destructor_verbose = true;	// Print verbose information in all destructors.
@@ -42,7 +42,7 @@ inline api::SKeyMap q3viewer_keymap_wasd[] =
 		{api::EKA_STRAFE_LEFT, api::KEY_KEY_A},
 		{api::EKA_STRAFE_RIGHT, api::KEY_KEY_D}
 	};
-inline s32 q3viewer_keymap_wasd_size = 4;
+inline i32 q3viewer_keymap_wasd_size = 4;
 
 static std::mutex q3viewer_print_mutex{};
 

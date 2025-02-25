@@ -23,7 +23,7 @@ q3viewer::engine_objects::engine_objects(video::E_DRIVER_TYPE edt__, u32 width__
 {
 	engine = api::createDevice(
 		edt__,
-		core::dimension2du{width__, height__},
+		nub::dimension2du{width__, height__},
 		32,
 		false,
 		true,
@@ -79,9 +79,9 @@ void q3viewer::engine_objects::setup_camera_collision()
 	scene::ISceneNodeAnimator * collision = scene->createCollisionResponseAnimator(
 		meta_selector,
 		fps_camera,
-		core::vector3df{30, 50, 30},
-		core::vector3df{0, q3viewer_global_gravity, 0},
-		core::vector3df{0, 0, 0},
+		nub::vector3df{30, 50, 30},
+		nub::vector3df{0, q3viewer_global_gravity, 0},
+		nub::vector3df{0, 0, 0},
 		0.0001f
 	);
 	fps_camera->addAnimator(collision);

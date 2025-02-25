@@ -87,7 +87,7 @@ q3viewer::q3_map_loader::~q3_map_loader()
 		std::cout << "[c++ destructor] q3viewer::~q3_map_loader: q3_map_loader is unloaded!\n";
 }
 
-q3viewer::q3_map_loader::q3_map_loader(q3viewer::engine_objects & engine__, s32 polys__):
+q3viewer::q3_map_loader::q3_map_loader(q3viewer::engine_objects & engine__, i32 polys__):
 	engine{engine__},
 	polys{polys__}
 {
@@ -206,16 +206,16 @@ void q3viewer::q3_map_loader::load_shaders()
 		scene::IMesh * e_mesh = mesh_qv->getMesh(qm_index);
 		if (! e_mesh)
 			continue;
-		s32 mb_count = e_mesh->getMeshBufferCount();
+		i32 mb_count = e_mesh->getMeshBufferCount();
 		cout_buffer << "\t\t:: Mesh Buffer Count:\t" << mb_count << std::endl;
-		api::s32 i=0;
+		api::i32 i=0;
 		for (; i<mb_count; ++i)
 		{
 			scene::IMeshBuffer * mesh_buffer = e_mesh->getMeshBuffer(i);
 			if (! mesh_buffer)
 				continue;
 			video::SMaterial & material = mesh_buffer->getMaterial();
-			s32 shader_index = (s32)material.MaterialTypeParam2;
+			i32 shader_index = (i32)material.MaterialTypeParam2;
 			const quake3::IShader * shader = mesh_qv->getShader(shader_index);
 			if (! shader)
 				continue;
@@ -235,7 +235,7 @@ void q3viewer::q3_map_loader::load_shaders()
 				q3viewer::qm_index_to_wstring_class{}(qm_index).data(),
 				video::SColor{0xff32ff32},
 				node,
-				core::vector3df{0},
+				nub::vector3df{0},
 				-1
 			);
 			switch (qm_index)
@@ -278,13 +278,13 @@ void q3viewer::q3_map_loader::spawn_player()
 	quake3::IEntity search;
 	search.name = "info_player_deathmatch";
 	
-	s32 result{-1};
+	i32 result{-1};
 	{
-		s32 rd = q3viewer_random()%10;
-		s32 npos{0};
-		for (s32 i=0; i<rd; ++i)
+		i32 rd = q3viewer_random()%10;
+		i32 npos{0};
+		for (i32 i=0; i<rd; ++i)
 		{
-			s32 result2 = elist.binary_search_multi(search, npos);
+			i32 result2 = elist.binary_search_multi(search, npos);
 			if (result2 < 0)
 				break;
 			// else
@@ -294,7 +294,7 @@ void q3viewer::q3_map_loader::spawn_player()
 	if (result < 0)
 	{
 		search.name = "info_player_start";
-		s32 npos{0};
+		i32 npos{0};
 		result = elist.binary_search_multi(search, npos);
 	}
 	if (result < 0)
@@ -305,7 +305,7 @@ void q3viewer::q3_map_loader::spawn_player()
 	
 	quake3::IEntity & entity = elist[result];
 	
-	s32 g_size = entity.getGroupSize();
+	i32 g_size = entity.getGroupSize();
 	
 	if (g_size < 2)
 	{
@@ -316,15 +316,15 @@ void q3viewer::q3_map_loader::spawn_player()
 	const quake3::SVarGroup * group = entity.getGroup(1);
 	
 	{
-		core::stringc pos_str = group->get("origin");
-		core::stringc angle_str = group->get("angle");
+		nub::string pos_str = group->get("origin");
+		nub::string angle_str = group->get("angle");
 		u32 npos{0};
-		core::vector3df pos = quake3::getAsVector3df(pos_str, npos);
+		nub::vector3df pos = quake3::getAsVector3df(pos_str, npos);
 		npos = 0;
 		f32 angle = quake3::getAsFloat(angle_str, npos);
 		engine.fps_camera->setPosition(pos);
-		core::vector3df dir{0, 0, 1};
-		dir.rotateXZBy(angle, core::vector3df{0,1,0});
+		nub::vector3df dir{0, 0, 1};
+		dir.rotateXZBy(angle, nub::vector3df{0,1,0});
 		engine.fps_camera->setTarget(pos+dir);
 		engine.fps_camera->setFarValue(100000);
 		std::cout << "fps_camera position set: (" << pos.X << ", " << pos.Y << ", " << pos.Z << ")\n";
