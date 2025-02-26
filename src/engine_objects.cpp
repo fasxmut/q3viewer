@@ -21,7 +21,7 @@ q3viewer::engine_objects::~engine_objects()
 
 q3viewer::engine_objects::engine_objects(video::E_DRIVER_TYPE edt__, u32 width__, u32 height__)
 {
-	engine = api::createDevice(
+	engine = api::createPub(
 		edt__,
 		nub::dimension2du{width__, height__},
 		32,
