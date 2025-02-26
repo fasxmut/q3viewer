@@ -13,9 +13,9 @@
 #include <random>
 #include <mutex>
 
-using i32 = api::int32_kt;
-using u32 = api::uint32_kt;
-using f32 = api::float32_kt;
+using i32 = api::int32_pub;
+using u32 = api::uint32_pub;
+using f32 = api::float32_pub;
 
 using std::operator""s;
 
